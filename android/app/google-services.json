@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "809222444332",
+    "project_id": "estoque-uvz-2026",
+    "storage_bucket": "estoque-uvz-2026.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:809222444332:android:46bf8a5090e09cab00c889",
+        "android_client_info": {
+          "package_name": "com.example.primeiro_projeto_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhdiZQe03fZQ877nEnwhhCzt2VOX9ASjY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
