@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../servicos/carrinho_service.dart';
 
 class RevisaoPedidoPage extends StatefulWidget {
   final List<Map<String, dynamic>> itensSelecionados;
@@ -33,7 +34,7 @@ class _RevisaoPedidoPageState extends State<RevisaoPedidoPage> {
       });
 
       if (mounted) {
-        // Importante: Se você usa um serviço global de carrinho, limpe-o aqui antes de voltar
+        CarrinhoService().limparCarrinho();
         Navigator.pop(context, true);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Requisição enviada com sucesso!')),

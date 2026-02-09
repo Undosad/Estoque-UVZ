@@ -3,6 +3,7 @@ import 'package:primeiro_projeto_flutter/paginas/estoque_page.dart';
 import 'package:primeiro_projeto_flutter/paginas/saidas_page.dart';
 import 'package:primeiro_projeto_flutter/paginas/entradas_page.dart';
 import 'package:primeiro_projeto_flutter/paginas/pedidos_page.dart';
+import 'package:primeiro_projeto_flutter/paginas/historico_pedidos_pessoa_page.dart';
 
 
 
@@ -57,15 +58,29 @@ class MinhaTela extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // BOTÃO PEDIDOS
+            // BOTÃO PEDIDOS (PENDENTES)
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const PedidosPage()), // Nome da classe no arquivo pedidos_page
+                  MaterialPageRoute(builder: (context) => const PedidosPage()),
                 );
               },
-              child: const Text('Pedidos'),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent, foregroundColor: Colors.white),
+              child: const Text('Pedidos Pendentes'),
+            ),
+            const SizedBox(height: 20),
+
+            // BOTÃO HISTÓRICO POR PESSOA
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HistoricoPedidosPessoaPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent, foregroundColor: Colors.white),
+              child: const Text('Pedidos por Pessoa/Núcleo'),
             ),
           ],
         ),

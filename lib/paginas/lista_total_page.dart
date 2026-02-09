@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../modelos/item_estoque.dart';
 import 'revisao_pedido_page.dart';
+import '../servicos/carrinho_service.dart';
 
 
 class ListaTotalPage extends StatefulWidget {
@@ -14,7 +15,7 @@ class ListaTotalPage extends StatefulWidget {
 
 class _ListaTotalPageState extends State<ListaTotalPage> {
   String busca = "";
-  List<Map<String, dynamic>> carrinho = [];
+  final CarrinhoService _carrinhoService = CarrinhoService();
 
   // Função de normalização para ignorar acentos e erros
   String normalizarTexto(String? texto) {
@@ -79,14 +80,13 @@ class _ListaTotalPageState extends State<ListaTotalPage> {
               onPressed: () {
                 int qtd = int.tryParse(qtdController.text) ?? 0;
                 if (qtd > 0) {
-                  setState(() {
-                    carrinho.add({
-                      'codigo': item.codigo,
-                      'nome': item.item,
-                      'qtd_pedida': qtd,
-                      'qtd_entregue': 0,
-                    });
+                  _carrinhoService.adicionarItem({
+                    'codigo': item.codigo,
+                    'nome': item.item,
+                    'qtd_pedida': qtd,
+                    'qtd_entregue': 0,
                   });
+                  setState(() {}); // Atualiza a UI para mostrar o FAB
                   Navigator.pop(context);
                 }
               },
@@ -224,14 +224,17 @@ class _ListaTotalPageState extends State<ListaTotalPage> {
           );
         },
       ),
-      floatingActionButton: carrinho.isEmpty ? null : FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
+      floatingActionButton: _carrinhoService.totalItens == 0 ? null : FloatingActionButton.extended(
+        onPressed: () async {
+          final resultado = await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => RevisaoPedidoPage(itensSelecionados: carrinho)),
+            MaterialPageRoute(builder: (context) => RevisaoPedidoPage(itensSelecionados: _carrinhoService.itens)),
           );
+          if (resultado == true) {
+            setState(() {}); // Atualiza se o carrinho foi limpo
+          }
         },
-        label: Text('Ver Pedido (${carrinho.length})'),
+        label: Text('Ver Pedido (${_carrinhoService.totalItens})'),
         icon: const Icon(Icons.shopping_cart),
         backgroundColor: Colors.orangeAccent,
       ),
