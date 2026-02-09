@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart'; 
-import 'firebase_options.dart'; 
-// Importante: mantenha o import da sua menu_page se o VS Code pedir
-import 'package:primeiro_projeto_flutter/paginas/menu_page.dart'; 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:provider/provider.dart';
+import 'paginas/login_page.dart';
+import 'package:primeiro_projeto_flutter/providers/usuario_provider.dart';
+import 'package:primeiro_projeto_flutter/paginas/menu_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  runApp(const MyApp()); // Chamamos o MyApp que configura o estilo do app
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UsuarioProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -19,32 +25,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Estoque UVZ',
-      debugShowCheckedModeBanner: false, // Tira aquela faixa vermelha de "debug"
-      home: TelaInicial(),
-    );
-  }
-}
+    // Aqui acontece a mágica: o app tenta carregar o usuário
+    return FutureBuilder(
+      future: Provider.of<UsuarioProvider>(context, listen: false).carregarUsuarioSalvo(),
+      builder: (context, snapshot) {
+        // Enquanto ele procura no "post-it" do celular, mostra um carregando
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const MaterialApp(home: Scaffold(body: Center(child: CircularProgressIndicator())));
+        }
 
-class TelaInicial extends StatelessWidget {
-  const TelaInicial({super.key});
+        final usuario = Provider.of<UsuarioProvider>(context);
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Início - Estoque UVZ')),
-      body: Center(
-        child: ElevatedButton(
-          child: const Text('Entrar no Sistema'),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MinhaTela()),
-            );
-          },
-        ),
-      ),
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Estoque UVZ',
+          theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
+          // Se estiver logado, vai pro Menu. Se não, vai pro Login.
+          home: usuario.estaLogado ? MenuPage() : LoginPage(),
+        );
+      },
     );
   }
 }
